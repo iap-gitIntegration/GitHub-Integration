@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: hostName
   become: true
   vars:
     dir_path: "{{ dir_path }}"  # Path where you want the directory
