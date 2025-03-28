@@ -1,0 +1,22 @@
+---
+- hosts: hostName
+  become: true
+  vars:
+    dir_path: "{{ dir_path }}"
+    dir_name: "{{ dir_name }}"
+    script_path: "/tmp/create_dir.sh" # Remote path for the script
+
+  tasks:
+    - name: Copy shell script to remote host
+      copy:
+        src: create_dir.sh  # Local path (relative to playbook)
+        dest: "{{ script_path }}"
+        mode: '0755'
+
+    - name: Execute the shell script
+      shell: "{{ script_path }} {{ dir_path }} {{ dir_name }}"
+      register: script_output
+
+    - name: Print the script output
+      debug:
+        var: script_output.stdout
