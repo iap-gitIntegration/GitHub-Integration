@@ -5,6 +5,8 @@
     dir_path: "{{ dir_path }}"
     dir_name: "{{ dir_name }}"
     script_path: "/tmp/create_dir.sh" # Remote path for the script
+    file_name: "test_file.txt"
+    file_content: "This is the test content for the new file."
 
   tasks:
     - name: Copy shell script to remote host
@@ -13,10 +15,24 @@
         dest: "{{ script_path }}"
         mode: '0755'
 
-    - name: Execute the shell script
+    - name: Execute the shell script to create directory
       shell: "{{ script_path }} {{ dir_path }} {{ dir_name }}"
       register: script_output
 
-    - name: Print the script output
+    - name: Print the directory creation script output
       debug:
         var: script_output.stdout
+
+    - name: Create the new file with content
+      file:
+        path: "{{ dir_path }}/{{ dir_name }}/{{ file_name }}"
+        state: touch
+
+    - name: Add content to the new file
+      copy:
+        content: "{{ file_content }}\n"
+        dest: "{{ dir_path }}/{{ dir_name }}/{{ file_name }}"
+
+    - name: Print confirmation message
+      debug:
+        msg: "File '{{ file_name }}' created with content in '{{ dir_path }}/{{ dir_name }}'."
